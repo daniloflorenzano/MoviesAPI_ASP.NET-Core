@@ -62,7 +62,7 @@ namespace MoviesAPI.Controllers
         // PUT: api/Directors/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<ActionResult<DirectorInputPutDTO>> PutDirector(long id, [FromBody] DirectorInputPutDTO directorInputDTO)
+        public async Task<ActionResult<DirectorOutputPutDTO>> PutDirector(long id, [FromBody] DirectorInputPutDTO directorInputDTO)
         {
             var director = new Director(directorInputDTO.Name);
             director.Id = id;
@@ -97,7 +97,7 @@ namespace MoviesAPI.Controllers
         // POST: api/Directors
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<DirectorInputPostDTO>> PostDirector([FromBody] DirectorInputPostDTO DirectorInputDTO)
+        public async Task<ActionResult<DirectorOutputPostDTO>> PostDirector([FromBody] DirectorInputPostDTO DirectorInputDTO)
         {
             var director = new Director(DirectorInputDTO.Name);
 
