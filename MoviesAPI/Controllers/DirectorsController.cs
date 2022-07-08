@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MoviesAPI;
 using MoviesAPI.Models;
+using MoviesAPI.DTOs;
+
 
 namespace MoviesAPI.Controllers
 {
@@ -25,10 +27,10 @@ namespace MoviesAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Director>>> GetDirectors()
         {
-          if (_context.Directors == null)
-          {
-              return NotFound();
-          }
+            if (_context.Directors == null)
+            {
+                return NotFound();
+            }
             return await _context.Directors.ToListAsync();
         }
 
@@ -36,10 +38,10 @@ namespace MoviesAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Director>> GetDirector(long id)
         {
-          if (_context.Directors == null)
-          {
-              return NotFound();
-          }
+            if (_context.Directors == null)
+            {
+                return NotFound();
+            }
             var director = await _context.Directors.FindAsync(id);
 
             if (director == null)
@@ -47,20 +49,23 @@ namespace MoviesAPI.Controllers
                 return NotFound();
             }
 
-            return director;
+            return Ok(director);
         }
 
         // PUT: api/Directors/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutDirector(long id, Director director)
+        public async Task<ActionResult<DirectorInputPutDTO>> PutDirector(long id, [FromBody] DirectorInputPutDTO directorInputDTO)
         {
+            var director = new Director(directorInputDTO.Name);
+            director.Id = id;
+
             if (id != director.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(director).State = EntityState.Modified;
+            _context.Directors.Update(director);
 
             try
             {
@@ -78,23 +83,26 @@ namespace MoviesAPI.Controllers
                 }
             }
 
-            return NoContent();
+            var diretorOutputDto = new DirectorOutputPutDTO(director.Id, director.Name);
+            return Ok(diretorOutputDto);
         }
 
         // POST: api/Directors
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Director>> PostDirector([FromBody] Director director)
+        public async Task<ActionResult<DirectorInputPostDTO>> PostDirector([FromBody] DirectorInputPostDTO DirectorInputDTO)
         {
-          if (_context.Directors == null)
-          {
-              return Problem("Entity set 'ApplicationDbContext.Directors'  is null.");
-          }
+            var director = new Director(DirectorInputDTO.Name);
+
+            if (_context.Directors == null)
+            {
+                return Problem("Entity set 'ApplicationDbContext.Directors'  is null.");
+            }
             _context.Directors.Add(director);
             await _context.SaveChangesAsync();
 
-            //return CreatedAtAction("GetDirector", new { id = director.Id }, director);
-            return Ok(director);
+            var directorOutputDto = new DirectorOutputPostDTO(director.Id, director.Name);
+            return Ok(directorOutputDto);
         }
 
         // DELETE: api/Directors/5
