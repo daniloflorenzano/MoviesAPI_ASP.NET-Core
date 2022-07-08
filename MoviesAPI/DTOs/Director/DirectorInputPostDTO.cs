@@ -1,4 +1,4 @@
-﻿namespace MoviesAPI.DTOs
+﻿namespace MoviesAPI.DTOs.Director
 {
     public class DirectorInputPostDTO
     {

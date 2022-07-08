@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using MoviesAPI;
 using MoviesAPI.Models;
 using MoviesAPI.DTOs;
-
+using MoviesAPI.DTOs.Director;
 
 namespace MoviesAPI.Controllers
 {
@@ -25,31 +25,38 @@ namespace MoviesAPI.Controllers
 
         // GET: api/Directors
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Director>>> GetDirectors()
+        public async Task<List<DirectorOutputGetAllDTO>> GetDirectors()
         {
-            if (_context.Directors == null)
+            var directors = await _context.Directors.ToListAsync();
+
+            var outputDTOList = new List<DirectorOutputGetAllDTO>();
+
+            foreach (Director director in directors)
             {
-                return NotFound();
+                outputDTOList.Add(new DirectorOutputGetAllDTO(director.Id, director.Name));
             }
-            return await _context.Directors.ToListAsync();
+
+            return outputDTOList;
         }
 
         // GET: api/Directors/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Director>> GetDirector(long id)
+        public async Task<ActionResult<DirectorOutputGetByIdDTO>> GetDirector(long id)
         {
             if (_context.Directors == null)
             {
                 return NotFound();
             }
-            var director = await _context.Directors.FindAsync(id);
+
+            var director = await _context.Directors.FirstOrDefaultAsync(director => director.Id == id);
 
             if (director == null)
             {
                 return NotFound();
             }
 
-            return Ok(director);
+            var outputDTO = new DirectorOutputGetByIdDTO(director.Id, director.Name);
+            return Ok(outputDTO);
         }
 
         // PUT: api/Directors/5
