@@ -6,11 +6,12 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MoviesAPI;
+using MoviesAPI.DTOs.Movie;
 using MoviesAPI.Models;
 
 namespace MoviesAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class MoviesController : ControllerBase
     {
@@ -23,44 +24,57 @@ namespace MoviesAPI.Controllers
 
         // GET: api/Movies
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Movie>>> GetMovies()
+        public async Task<List<MovieOutputGetAllDTO>> GetMovies()
         {
-          if (_context.Movies == null)
-          {
-              return NotFound();
-          }
-            return await _context.Movies.ToListAsync();
+            var movies = await _context.Movies.ToListAsync();
+
+            var outputDTOList = new List<MovieOutputGetAllDTO>();
+
+            foreach (Movie movie in movies)
+            {
+                outputDTOList.Add(new MovieOutputGetAllDTO(movie.Id, movie.Title));
+            }
+
+            return outputDTOList;
         }
 
         // GET: api/Movies/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Movie>> GetMovie(int id)
+        public async Task<ActionResult<MovieOutputGetByIdDTO>> GetMovie(int id)
         {
-          if (_context.Movies == null)
-          {
-              return NotFound();
-          }
-            var movie = await _context.Movies.FindAsync(id);
+            var movie = await _context.Movies
+                .Include(movie => movie.Director)
+                .FirstOrDefaultAsync(movie => movie.Id == id);
 
+
+            if (_context.Movies == null)
+            {
+                return NotFound();
+            }
+            
             if (movie == null)
             {
                 return NotFound();
             }
 
-            return movie;
+            var outputDTO = new MovieOutputGetByIdDTO(movie.Id, movie.Title, movie.Director.Name);
+            return Ok(outputDTO);
         }
 
         // PUT: api/Movies/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutMovie(int id, Movie movie)
+        public async Task<ActionResult<MovieOutputPutDTO>> PutMovie(int id, [FromBody] MovieInputPutDTO inputDTO)
         {
+            var movie = new Movie(inputDTO.Title, inputDTO.DirectorId);
+            movie.Id = id;
+
             if (id != movie.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(movie).State = EntityState.Modified;
+            _context.Movies.Update(movie);
 
             try
             {
@@ -78,22 +92,30 @@ namespace MoviesAPI.Controllers
                 }
             }
 
-            return NoContent();
+            var outputDTO = new MovieOutputPutDTO(movie.Id, movie.Title);
+            return Ok(outputDTO);
         }
 
         // POST: api/Movies
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Movie>> PostMovie(Movie movie)
+        public async Task<ActionResult<MovieOutputPostDTO>> PostMovie([FromBody] MovieInputPostDTO inputDTO)
         {
-          if (_context.Movies == null)
-          {
-              return Problem("Entity set 'ApplicationDbContext.Movies'  is null.");
-          }
+            var director = await _context.Directors.FirstOrDefaultAsync(director => director.Id == inputDTO.DirectorId);
+
+            if (director == null) return NotFound("Director not found");
+
+            var movie = new Movie(inputDTO.Title, director.Id);
+
+            if (_context.Movies == null)
+            {
+                return Problem("Entity set 'ApplicationDbContext.Movies'  is null.");
+            }
             _context.Movies.Add(movie);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetMovie", new { id = movie.Id }, movie);
+            var outputDTO = new MovieOutputPostDTO(movie.Id, movie.Title);
+            return Ok(outputDTO);
         }
 
         // DELETE: api/Movies/5

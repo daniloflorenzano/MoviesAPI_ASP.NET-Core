@@ -1,13 +1,11 @@
-﻿namespace MoviesAPI.Models
+﻿namespace MoviesAPI.DTOs.Movie
 {
-    public class Movie
+    public class MovieInputPostDTO
     {
-        public int Id { get; set; }
         public string Title { get; set; }
         public long DirectorId { get; set; }
-        public Director Director { get; set; }
 
-        public Movie(string title, long directorId)
+        public MovieInputPostDTO(string title, long directorId)
         {
             Title = title;
             DirectorId = directorId;
