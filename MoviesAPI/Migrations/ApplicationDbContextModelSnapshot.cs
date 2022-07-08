@@ -22,10 +22,6 @@ namespace MoviesAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -41,18 +37,10 @@ namespace MoviesAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Ano")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
                     b.Property<long>("DirectorId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Genre")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Titulo")
+                    b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("TEXT");
 

@@ -10,7 +10,7 @@ using MoviesAPI;
 namespace MoviesAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220708144302_PrimeiraVersao")]
+    [Migration("20220708171848_PrimeiraVersao")]
     partial class PrimeiraVersao
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -23,10 +23,6 @@ namespace MoviesAPI.Migrations
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -43,18 +39,10 @@ namespace MoviesAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Ano")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
                     b.Property<long>("DirectorId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Genre")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Titulo")
+                    b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
