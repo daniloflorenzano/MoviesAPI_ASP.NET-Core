@@ -24,7 +24,7 @@ namespace MoviesAPI.Controllers
 
         // GET: api/Movies
         [HttpGet]
-        public async Task<List<MovieOutputGetAllDTO>> GetMovies()
+        public async Task<ActionResult<List<MovieOutputGetAllDTO>>> GetMovies()
         {
             var movies = await _context.Movies.ToListAsync();
 
@@ -51,7 +51,7 @@ namespace MoviesAPI.Controllers
             {
                 return NotFound();
             }
-            
+
             if (movie == null)
             {
                 return NotFound();

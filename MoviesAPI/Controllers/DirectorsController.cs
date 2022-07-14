@@ -25,7 +25,7 @@ namespace MoviesAPI.Controllers
 
         // GET: api/Directors
         [HttpGet]
-        public async Task<List<DirectorOutputGetAllDTO>> GetDirectors()
+        public async Task<ActionResult<List<DirectorOutputGetAllDTO>>> GetDirectors()
         {
             var directors = await _context.Directors.ToListAsync();
 
