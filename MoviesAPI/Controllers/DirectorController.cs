@@ -14,11 +14,11 @@ namespace MoviesAPI.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    public class DirectorsController : ControllerBase
+    public class DirectorController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
 
-        public DirectorsController(ApplicationDbContext context)
+        public DirectorController(ApplicationDbContext context)
         {
             _context = context;
         }
@@ -62,7 +62,8 @@ namespace MoviesAPI.Controllers
         // PUT: api/Directors/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<ActionResult<DirectorOutputPutDTO>> PutDirector(long id, [FromBody] DirectorInputPutDTO directorInputDTO)
+        public async Task<ActionResult<DirectorOutputPutDTO>> PutDirector(long id,
+            [FromBody] DirectorInputPutDTO directorInputDTO)
         {
             var director = new Director(directorInputDTO.Name);
             director.Id = id;
@@ -94,10 +95,27 @@ namespace MoviesAPI.Controllers
             return Ok(diretorOutputDto);
         }
 
+        /// <summary>
+        /// Cria um diretor
+        /// </summary>
+        /// <remarks>
+        /// Sample request:
+        /// 
+        ///     POST /director
+        ///     {
+        ///         "nome": "Steven Spielberg"
+        ///     }
+        /// 
+        /// </remarks>
+        /// <param name="DirectorInputDTO">Nome do diretor</param>
+        /// <returns>O diretor criado</returns>
+        /// <response code="200">Diretor foi criado com sucesso</response>
+        /// <response code="500">Erro interno inesperado</response>
         // POST: api/Directors
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<DirectorOutputPostDTO>> PostDirector([FromBody] DirectorInputPostDTO DirectorInputDTO)
+        public async Task<ActionResult<DirectorOutputPostDTO>> PostDirector(
+            [FromBody] DirectorInputPostDTO DirectorInputDTO)
         {
             var director = new Director(DirectorInputDTO.Name);
 
@@ -105,6 +123,7 @@ namespace MoviesAPI.Controllers
             {
                 return Problem("Entity set 'ApplicationDbContext.Directors'  is null.");
             }
+
             _context.Directors.Add(director);
             await _context.SaveChangesAsync();
 
@@ -120,6 +139,7 @@ namespace MoviesAPI.Controllers
             {
                 return NotFound();
             }
+
             var director = await _context.Directors.FindAsync(id);
             if (director == null)
             {
