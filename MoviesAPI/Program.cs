@@ -1,14 +1,17 @@
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
+using FluentValidation.AspNetCore;
 using Microsoft.OpenApi.Models;
 using MoviesAPI;
-using MoviesAPI.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddFluentValidation(options =>
+{
+    options.RegisterValidatorsFromAssemblyContaining<Program>();
+});
 
 builder.Services.AddDbContext<ApplicationDbContext>(opt => opt.UseSqlite("Data Source=myapp.db"));
 

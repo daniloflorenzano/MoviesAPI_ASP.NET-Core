@@ -61,6 +61,23 @@ namespace MoviesAPI.Controllers
 
         // PUT: api/Directors/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// Edita um diretor
+        /// </summary>
+        /// <remarks>
+        ///
+        ///     PUT /director{id}
+        ///     {
+        ///         "nome": "Steven Spielberg"
+        ///     }
+        /// 
+        /// </remarks>
+        /// <param name="id">Id do diretor</param>
+        /// <param name="directorInputDTO">Nome do diretor</param>
+        /// <returns>O diretor alterado</returns>
+        /// <response code="200">Diretor foi alterado com sucesso</response>
+        /// <response code="500">Erro interno inesperado</response>
+        /// <response code="400">Erro de validacao"</response>
         [HttpPut("{id}")]
         public async Task<ActionResult<DirectorOutputPutDTO>> PutDirector(long id,
             [FromBody] DirectorInputPutDTO directorInputDTO)
@@ -95,6 +112,8 @@ namespace MoviesAPI.Controllers
             return Ok(diretorOutputDto);
         }
 
+        // POST: api/Directors
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         /// <summary>
         /// Cria um diretor
         /// </summary>
@@ -111,8 +130,7 @@ namespace MoviesAPI.Controllers
         /// <returns>O diretor criado</returns>
         /// <response code="200">Diretor foi criado com sucesso</response>
         /// <response code="500">Erro interno inesperado</response>
-        // POST: api/Directors
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <response code="400">Erro de validacao"</response>
         [HttpPost]
         public async Task<ActionResult<DirectorOutputPostDTO>> PostDirector(
             [FromBody] DirectorInputPostDTO DirectorInputDTO)
