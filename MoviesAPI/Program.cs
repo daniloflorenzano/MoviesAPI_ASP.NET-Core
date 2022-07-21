@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using FluentValidation.AspNetCore;
 using Microsoft.OpenApi.Models;
 using MoviesAPI;
+using MoviesAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,6 +28,7 @@ builder.Services.AddSwaggerGen(c =>
 
     c.IncludeXmlComments(xmlPath);
 });
+builder.Services.AddScoped<IDirectorService, DirectorService>();
 
 var app = builder.Build();
 

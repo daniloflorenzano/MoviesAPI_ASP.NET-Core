@@ -9,6 +9,7 @@ using MoviesAPI;
 using MoviesAPI.Models;
 using MoviesAPI.DTOs;
 using MoviesAPI.DTOs.Director;
+using MoviesAPI.Services;
 
 namespace MoviesAPI.Controllers
 {
@@ -17,18 +18,19 @@ namespace MoviesAPI.Controllers
     public class DirectorController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly IDirectorService _directorService;
 
-        public DirectorController(ApplicationDbContext context)
+        public DirectorController(ApplicationDbContext context, IDirectorService directorService)
         {
             _context = context;
+            _directorService = directorService;
         }
 
         // GET: api/Directors
         [HttpGet]
         public async Task<ActionResult<List<DirectorOutputGetAllDTO>>> GetDirectors()
         {
-            var directors = await _context.Directors.ToListAsync();
-
+            var directors = await _directorService.GetAll();
             var outputDTOList = new List<DirectorOutputGetAllDTO>();
 
             foreach (Director director in directors)
