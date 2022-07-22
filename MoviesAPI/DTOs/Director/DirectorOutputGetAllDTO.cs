@@ -1,9 +1,17 @@
 ﻿namespace MoviesAPI.DTOs
 {
+    public class DirectorListOutputGetAllDTO
+    {
+        public int CurrentPage { get; init; }
+        public int TotalItems { get; init; }
+        public int TotalPages { get; init; }
+        public List<DirectorOutputGetAllDTO> Items { get; init; }
+    }
+    
     public class DirectorOutputGetAllDTO
     {
-        public long Id { get; private set; }
-        public string Name { get; private set; }
+        public long Id { get; set; }
+        public string Name { get; set; }
 
         public DirectorOutputGetAllDTO(long id, string name)
         {

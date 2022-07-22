@@ -11,9 +11,9 @@ namespace MoviesAPI.DTOs.Director
     {
         public DirectorInputPostDTOValidator()
         {
-            RuleFor(director => director.Name).NotNull().NotEmpty();
-            RuleFor(director => director.Name).Length(2, 250).
-                WithMessage("Tamanho {TotalLength} e invalido");
+            RuleFor(x => x.Name)
+                .NotEmpty()
+                .WithMessage("O nome do diretor eh obrigatorio.");
         }
     }
 }

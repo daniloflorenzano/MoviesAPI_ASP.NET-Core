@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using MoviesAPI;
+﻿using Microsoft.AspNetCore.Mvc;
 using MoviesAPI.Models;
 using MoviesAPI.DTOs;
 using MoviesAPI.DTOs.Director;
@@ -28,37 +21,20 @@ namespace MoviesAPI.Controllers
 
         // GET: api/Directors
         [HttpGet]
-        public async Task<ActionResult<List<DirectorOutputGetAllDTO>>> GetDirectors()
+        public async Task<ActionResult<DirectorListOutputGetAllDTO>> Get(CancellationToken cancellationToken,
+            int limit = 5, int page = 1)
         {
-            var directors = await _directorService.GetAll();
-            var outputDTOList = new List<DirectorOutputGetAllDTO>();
-
-            foreach (Director director in directors)
-            {
-                outputDTOList.Add(new DirectorOutputGetAllDTO(director.Id, director.Name));
-            }
-
-            return outputDTOList;
+            return await _directorService.GetByPageAsync(limit, page, cancellationToken);
         }
 
         // GET: api/Directors/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<DirectorOutputGetByIdDTO>> GetDirector(long id)
+        public async Task<ActionResult<DirectorOutputGetByIdDTO>> Get(long id)
         {
-            if (_context.Directors == null)
-            {
-                return NotFound();
-            }
+            var director = await _directorService.GetById(id);
 
-            var director = await _context.Directors.FirstOrDefaultAsync(director => director.Id == id);
-
-            if (director == null)
-            {
-                return NotFound();
-            }
-
-            var outputDTO = new DirectorOutputGetByIdDTO(director.Id, director.Name);
-            return Ok(outputDTO);
+            var outputDto = new DirectorOutputGetByIdDTO(director.Id, director.Name);
+            return Ok(outputDto);
         }
 
         // PUT: api/Directors/5
@@ -81,34 +57,10 @@ namespace MoviesAPI.Controllers
         /// <response code="500">Erro interno inesperado</response>
         /// <response code="400">Erro de validacao"</response>
         [HttpPut("{id}")]
-        public async Task<ActionResult<DirectorOutputPutDTO>> PutDirector(long id,
+        public async Task<ActionResult<DirectorOutputPutDTO>> Put(long id,
             [FromBody] DirectorInputPutDTO directorInputDTO)
         {
-            var director = new Director(directorInputDTO.Name);
-            director.Id = id;
-
-            if (id != director.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Directors.Update(director);
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!DirectorExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            var director = await _directorService.Update(new Director(directorInputDTO.Name), id);
 
             var diretorOutputDto = new DirectorOutputPutDTO(director.Id, director.Name);
             return Ok(diretorOutputDto);
@@ -134,18 +86,10 @@ namespace MoviesAPI.Controllers
         /// <response code="500">Erro interno inesperado</response>
         /// <response code="400">Erro de validacao"</response>
         [HttpPost]
-        public async Task<ActionResult<DirectorOutputPostDTO>> PostDirector(
+        public async Task<ActionResult<DirectorOutputPostDTO>> Post(
             [FromBody] DirectorInputPostDTO DirectorInputDTO)
         {
-            var director = new Director(DirectorInputDTO.Name);
-
-            if (_context.Directors == null)
-            {
-                return Problem("Entity set 'ApplicationDbContext.Directors'  is null.");
-            }
-
-            _context.Directors.Add(director);
-            await _context.SaveChangesAsync();
+            var director = await _directorService.Create(new Director(DirectorInputDTO.Name));
 
             var directorOutputDto = new DirectorOutputPostDTO(director.Id, director.Name);
             return Ok(directorOutputDto);
@@ -153,28 +97,10 @@ namespace MoviesAPI.Controllers
 
         // DELETE: api/Directors/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteDirector(long id)
+        public async Task<IActionResult> Delete(long id)
         {
-            if (_context.Directors == null)
-            {
-                return NotFound();
-            }
-
-            var director = await _context.Directors.FindAsync(id);
-            if (director == null)
-            {
-                return NotFound();
-            }
-
-            _context.Directors.Remove(director);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private bool DirectorExists(long id)
-        {
-            return (_context.Directors?.Any(e => e.Id == id)).GetValueOrDefault();
+            await _directorService.Delete(id);
+            return Ok();
         }
     }
 }
