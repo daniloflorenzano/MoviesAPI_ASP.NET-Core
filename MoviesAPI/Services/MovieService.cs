@@ -29,7 +29,7 @@ public class MovieService : IMovieService
         {
             CurrentPage = pagedModel.CurrentPage,
             TotalPages = pagedModel.TotalPages,
-            TotalITems = pagedModel.TotalItems,
+            TotalItems = pagedModel.TotalItems,
             Items = pagedModel.Items.Select(movie => new MovieOutputGetAllDTO(movie.Id, movie.Title)).ToList()
         };
     }

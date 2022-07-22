@@ -3,7 +3,7 @@
     public class MovieListOutputGetAllDTO
     {
         public int CurrentPage { get; init; }
-        public int TotalITems { get; init; }
+        public int TotalItems { get; init; }
         public int TotalPages { get; init; }
         public List<MovieOutputGetAllDTO> Items { get; init; }
     }
